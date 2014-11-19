@@ -50,12 +50,11 @@ public static class Searcher
 }
 
 //Create custom queries at runtime
-
 var query = _simpleSearch.QueryBuilder
                 .ContainsPhrase(schema => schema.Text, "jump")
                 .AndContainsPhrase(schema => schema.Text1, "car")
                 .AndDateAfter(schema => schema.Date, new DateTime(2000, 1, 1))
-                .WithInRange(schema => schema.CategoryId, 34)
+                .WithInRange(schema => schema.CategoryId, 34, 36)
                 .AndDoesntContain(schema => schema.Text, "c#")
                 .ToString();
 ```
