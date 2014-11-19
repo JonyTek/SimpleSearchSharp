@@ -1,22 +1,61 @@
-BambooSharp
+SimpleSearchSharp
 ===========
 
-A C# wrapper for the Atlassian Bamboo REST API.
-
-This repo is a work in progress. Currently only base functionality has been implemented.
-
-If you feel that this Api could be of use then please contribute.
+A fully configurable little framework that makes use of the lightning speed of lucene.net.
 
 Contact: jonathontek@gmail.com
 
 PM> Install-Package Bamboo.Sharp
 
 ```csharp
-var api = new BambooApi("http://192.168.56.1:8085/rest/api/latest", "username", "password");
-//create an instance of the Api
+//Define you schema class
+ public class Schema : BaseSchema
+{
+	//Specify your Id field
+	[Identifier]
+	//Specify wheather you would like to retrieve fields for later use
+	[Store(FieldStore.Yes)]
+	//Specify wheather you would like a field to be included in yopur index
+	[Analyze(FieldIndex.Analyzed)]
+	public int Id { get; set; }
 
-var projects = api.GetService<ProjectService>().GetProjects();
-//Get a Projects object that contains all projects
+	[Store(FieldStore.Yes)]
+	[Analyze(FieldIndex.Analyzed)]
+	public string Heading { get; set; }
+}
 
-var user = api.GetService<CurrentUserService>().GetUser();
-//Get a User object
+//Configure
+public static class Searcher
+{
+	private static readonly SimpleSearch<StandardAnalyzer, Schema> _simpleSearch;
+
+	private const string PathToIndex = @"C:\Working\Sandbox\SimpleSearch\Index";
+
+	static Searcher()
+	{
+		_simpleSearch = SimpleSearch<StandardAnalyzer, Schema>.Init(PathToIndex);
+	}
+
+	public static SearchResultSet<Schema> BasicSearch(string term)
+	{
+		var query = _simpleSearch.QueryBuilder
+			.LikePhrase(schema => schema.Body, "jump")
+			.ToString();
+
+		var sort = _simpleSearch.SortBuilder
+			.Build(schema => schema.Body);
+
+		return _simpleSearch.Searcher.Search(query, sort);
+	}
+}
+
+//Create custom queries at runtime
+
+var query = _simpleSearch.QueryBuilder
+                .ContainsPhrase(schema => schema.Text, "jump")
+                .AndContainsPhrase(schema => schema.Text1, "car")
+                .AndDateAfter(schema => schema.Date, new DateTime(2000, 1, 1))
+                .WithInRange(schema => schema.CategoryId, 34)
+                .AndDoesntContain(schema => schema.Text, "c#")
+                .ToString();
+```
