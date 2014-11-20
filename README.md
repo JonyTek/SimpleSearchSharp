@@ -9,9 +9,11 @@ PM> Install-Package Bamboo.Sharp
 
 ```csharp
 //Define you schema class
+//Schema class must contain only public properties
  public class Schema : BaseSchema
 {
 	//Specify your Id field
+	//This attribute is mandatory
 	[Identifier]
 	//Specify wheather you would like to retrieve fields for later use
 	[Store(FieldStore.Yes)]
@@ -19,8 +21,9 @@ PM> Install-Package Bamboo.Sharp
 	[Analyze(FieldIndex.Analyzed)]
 	public int Id { get; set; }
 
-	[Store(FieldStore.Yes)]
-	[Analyze(FieldIndex.Analyzed)]
+	//Store attributes are optional. If not specified they default to FieldStore.Yes
+	//You may choose to not store a field with Store.No which will not be returned in a result set
+	//Analyze attributes are optional. If not specified they default to FieldIndex.Analyzed
 	public string Heading { get; set; }
 }
 
@@ -58,3 +61,21 @@ var query = _simpleSearch.QueryBuilder
                 .AndDoesntContain(schema => schema.Text, "c#")
                 .ToString();
 ```
+
+***Currently supported and tested Schema field types include
+*int
+*string
+*DateTime //We do not store time, only date
+*long                
+*Guid
+*Enum
+*char
+
+Note: We do not support complex types
+
+***Supported Lucene analyzers //Refer to the lucene docs for more info
+*KeywordAnalyzer
+*SimpleAnalyzer
+*StopAnalyzer
+*WhitespaceAnalyzer
+*StandardAnalyzer
