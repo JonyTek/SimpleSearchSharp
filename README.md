@@ -5,7 +5,7 @@ A fully configurable little framework that makes use of the lightning speed of l
 
 Contact: jonathontek@gmail.com
 
-PM> Install-Package Bamboo.Sharp
+PM> COMING SOON
 
 ```csharp
 //Define you schema class
@@ -59,7 +59,7 @@ var query = _simpleSearch.QueryBuilder
                 .ContainsPhrase(schema => schema.Text, "jump")
                 .AndContainsPhrase(schema => schema.Text1, "car")
                 .AndDateAfter(schema => schema.Date, new DateTime(2000, 1, 1))
-                .WithInRange(schema => schema.CategoryId, 34, 36)
+                .AndWithInRange(schema => schema.CategoryId, 34, 36)
                 .AndDoesntContain(schema => schema.Text, "c#")
                 .ToString();
 ```

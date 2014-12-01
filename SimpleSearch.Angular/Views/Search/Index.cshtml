@@ -1,0 +1,94 @@
+﻿@model SimpleSearch.Angular.Models.SearchViewModel
+
+@{
+    ViewBag.Title = "Search";
+    var currentTerm = HttpContext.Current.Request.QueryString["term"] ?? string.Empty;
+}
+
+<div class="container" ng-controller="searchCtrl">
+    <input type="hidden" id="searchTerm" value="@currentTerm"/>
+    <div class="row">
+        <div class="col-md-3">            
+            <div style="padding-top: 30px"></div>
+            <h4>Advanced Search</h4>
+            <hr/>
+            <form role="form">
+                <div class="form-group">
+                    <label for="contains">Contains</label>
+                    <input type="text" name="contains" class="form-control" ng-model="searchTerm" >
+                </div>
+                <div class="form-group">
+                    <label for="doesntContain">
+                        <input type="checkbox" class="checkBox" ng-model="showNotContains">Doesnt Contain
+                    </label>
+                    <input type="text" name="doesntContain" class="form-control" ng-model="notContains" ng-show="showNotContains" />
+                </div>
+                <div class="form-group">
+                    <label for="createdAfter">
+                        <input type="checkbox" class="checkBox" ng-model="showCreatedAfter">Created After
+                    </label>
+                    <input type="date" name="createdAfter" class="form-control" ng-model="createdAfter" max="@DateTime.Now.ToString("yyyy-MM-dd")" ng-show="showCreatedAfter" />
+                </div>
+                <div class="form-group">
+                    <label for="createdBefore">
+                        <input type="checkbox" class="checkBox" ng-model="showCreatedBefore">Created Before
+                    </label>
+                    <input type="date" name="createdBefore" class="form-control" ng-model="createdBefore" max="@DateTime.Now.ToString("yyyy-MM-dd")" ng-show="showCreatedBefore" />
+                </div>
+
+                <div class="form-group">
+                    <label for="category">
+                        <input type="checkbox" class="checkBox" ng-model="showCategory">Category
+                    </label>
+                    <div class="dropdown" ng-show="showCategory">
+                        <button class="btn btn-default btn-block dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                            {{category.name}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-repeat="category in categories" ng-click="selectCategory(category)">{{category.name}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr/>
+                <div class="form-group">
+                    <label for="orderBy">
+                        Order By
+                    </label>
+                    <div class="dropdown">
+                        <button class="btn btn-default btn-block dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                            {{orderby.displayName}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                            <li role="presentation" ng-repeat="(key, value) in results.OrderByOptions">
+                                <a role="menuitem" tabindex="-1" href="#" ng-click="selectOrderBy(key, value)">{{value}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr/>
+                <button type="submit" class="btn btn-success btn-block" ng-click="submit()">Search</button>
+            </form>
+        </div>
+        <div class="col-md-9" id="results">
+            <div style="padding-top: 30px">
+                <h3>Returned a total of {{results.ResultSet.SetCount}} results on term "<span style="color:blueviolet; font-style: italic">{{searchTerm}}</span>"</h3>
+                <hr />
+            </div>
+            <div>
+                <div ng-show="results.ResultSet.SetCount == 0" class="bs-callout bs-callout-warning">
+                    <h4>No documents found.</h4>
+                    <p>Please refine you query and trya again.</p>
+                    <hr />
+                </div>
+                <div ng-hide="results.ResultSet.SetCount == 0" class="bs-callout bs-callout-warning" ng-repeat="item in results.ResultSet.Results">
+                    <h4>{{item.Heading}}</h4>
+                    <p>{{item.Body}}</p>
+                    <p>Created: {{item.CreatedAt}}</p>
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
