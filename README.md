@@ -10,7 +10,7 @@ PM> Install-Package Bamboo.Sharp
 ```csharp
 //Define you schema class
 //Schema class must contain only public properties
- public class Schema : BaseSchema
+public class Schema : BaseSchema
 {
 	//Specify your Id field
 	//This attribute is mandatory
@@ -19,6 +19,8 @@ PM> Install-Package Bamboo.Sharp
 	[Store(FieldStore.Yes)]
 	//Specify wheather you would like a field to be included in yopur index
 	[Analyze(FieldIndex.Analyzed)]
+	//Field will be returned in result set so that fields can be sorted by
+	[Sortable("Identity")]
 	public int Id { get; set; }
 
 	//Store attributes are optional. If not specified they default to FieldStore.Yes
@@ -62,20 +64,8 @@ var query = _simpleSearch.QueryBuilder
                 .ToString();
 ```
 
-*** Currently supported and tested Schema field types include
-* int
-*string
-*DateTime //We do not store time, only date
-*long                
-*Guid
-*Enum
-*char
+Contained within the source code is a MVC/ angular project to get you started. 
 
-Note: We do not support complex types
+Before beginning you will need to seed an Index. Within SimpleSearch.App.Specs.Seeder modify the path for the index and run the test, this will seed your data. Secondly just update the path in SimpleSearch.Angular.Search.Searcher to point to the same location....
 
-***Supported Lucene analyzers //Refer to the lucene docs for more info
-*KeywordAnalyzer
-*SimpleAnalyzer
-*StopAnalyzer
-*WhitespaceAnalyzer
-*StandardAnalyzer
+Happy searching.
