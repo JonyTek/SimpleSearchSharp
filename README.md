@@ -62,8 +62,8 @@ var query = _simpleSearch.QueryBuilder
                 .ToString();
 ```
 
-***Currently supported and tested Schema field types include
-*int
+*** Currently supported and tested Schema field types include
+* int
 *string
 *DateTime //We do not store time, only date
 *long                
